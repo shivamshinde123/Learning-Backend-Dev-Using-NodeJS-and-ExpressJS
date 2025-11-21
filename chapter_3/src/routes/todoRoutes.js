@@ -6,15 +6,29 @@ import express from 'express'
 const router = express.Router()
 
 // get all todos for logged-in users
-router.get('/', (req, res) => {})
+router.get('/', (req, res) => {
+    const getTodos = db.prepare('SELECT * FROM todos WHERE user_id = ?')
+
+    const todos = getTodos.all(req.userId)
+
+    res.json(todos)
+})
 
 // create a todo
-router.post('/', (req, res) => {})
+router.post('/', (req, res) => {
+    const { task } = req.body
+
+    const insertTodo = db.prepare(`INSERT INTO todos (user_id, task) VALUES (?, ?)`)
+
+    const result = insertTodo.run(req.userId, task)
+
+    res.json({ id: result.lastInsertRowid, task, completed: 0 })
+})
 
 // update a todo
-router.put('/:id', (req, res) => {})
+router.put('/:id', (req, res) => { })
 
 // delete a todo
-router.delete('/:id', (req, res) => {})
+router.delete('/:id', (req, res) => { })
 
 export default router

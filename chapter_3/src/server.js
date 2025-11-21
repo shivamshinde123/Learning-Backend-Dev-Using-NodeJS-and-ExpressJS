@@ -3,19 +3,19 @@ import { fileURLToPath } from 'url';
 import path, { dirname } from 'path'
 import authRoutes from './routes/authRoutes.js'
 import todoRoutes from './routes/todoRoutes.js'
+import authMiddleware from './middleware/authMiddleware.js';
 
 const app = express()
 
 const PORT = process.env.PORT || 3000;
 
 // Get the filepath from the URL of the current module
-const __filename = fileURLToPath(import.meta.url);
-// console.log(__filename);
+const __filename = fileURLToPath(import.meta.url); // gives the path to server.js file while is the current file
+console.log(__filename);
 
 // Get the directory name from the file path
-const __dirname = dirname(__filename);
-// console.log(__dirname);
-
+const __dirname = dirname(__filename); // gives the path to the folder into which current file is present, i.e., in this case its src folder
+console.log(__dirname);
 
 // Middleware
 app.use(express.json())
@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 
 // routes
 app.use('/auth', authRoutes)
-app.use('/todos', todoRoutes)
+app.use('/todos', authMiddleware, todoRoutes)  // going from middleware to todo routes
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
